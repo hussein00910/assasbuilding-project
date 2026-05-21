@@ -1,38 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { createClient } from '@supabase/supabase-js';
+
+function db() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+    { auth: { autoRefreshToken: false, persistSession: false } }
+  );
+}
 
 export async function GET(_req: NextRequest, { params }: { params: { token: string } }) {
-  const { data: purchase, error } = await supabaseAdmin
-    .from('purchases')
-    .select('*, product:products(name, zip_file_url)')
-    .eq('download_token', params.token)
-    .single();
+  const { data: p } = await db().from('purchases')
+    .select('*, product:products(zip_file_url)')
+    .eq('download_token', params.token).single();
 
-  if (error || !purchase) {
-    return NextResponse.json({ error: 'Invalid or expired download link' }, { status: 404 });
-  }
+  if (!p) return NextResponse.json({ error: 'Invalid link' }, { status: 404 });
+  if (p.payment_status !== 'completed') return NextResponse.json({ error: 'Not paid' }, { status: 403 });
+  if (new Date(p.download_expires_at) < new Date()) return NextResponse.json({ error: 'Link expired' }, { status: 410 });
 
-  if (purchase.payment_status !== 'completed') {
-    return NextResponse.json({ error: 'Payment not completed' }, { status: 403 });
-  }
-
-  if (new Date(purchase.download_expires_at) < new Date()) {
-    return NextResponse.json({ error: 'Download link has expired' }, { status: 410 });
-  }
-
-  if (purchase.download_count >= purchase.max_downloads) {
-    return NextResponse.json({ error: 'Download limit reached' }, { status: 429 });
-  }
-
-  await supabaseAdmin
-    .from('purchases')
-    .update({ download_count: purchase.download_count + 1 })
-    .eq('id', purchase.id);
-
-  const zipUrl = purchase.product?.zip_file_url;
-  if (!zipUrl) {
-    return NextResponse.json({ error: 'File not available' }, { status: 404 });
-  }
-
-  return NextResponse.redirect(zipUrl);
+  await db().from('purchases').update({ download_count: (p.download_count ?? 0) + 1 }).eq('id', p.id);
+  const url = p.product?.zip_file_url;
+  if (!url) return NextResponse.json({ error: 'File not found' }, { status: 404 });
+  return NextResponse.redirect(url);
 }

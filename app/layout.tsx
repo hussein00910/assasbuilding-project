@@ -6,13 +6,7 @@ import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
   title: 'أساس بيلدينج | متاجر جاهزة وخدمات رقمية',
-  description: 'منصة احترافية لبيع المتاجر الجاهزة، القوالب الرقمية، وخدمات التطوير والدعم الفني',
-  keywords: ['متجر إلكتروني', 'قالب ويبسايت', 'تطوير مواقع', 'خدمات رقمية'],
-  openGraph: {
-    title: 'أساس بيلدينج',
-    description: 'منصة احترافية لبيع المتاجر الجاهزة والخدمات الرقمية',
-    type: 'website',
-  },
+  description: 'منصة احترافية لبيع المتاجر الجاهزة والقوالب الرقمية وخدمات التعديل والدعم الفني',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -22,12 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Navbar />
         <main className="min-h-screen">{children}</main>
         <Footer />
-        <Toaster
-          position="top-center"
-          toastOptions={{
-            style: { background: '#16162a', color: '#e2e8f0', border: '1px solid #2a2a4a' },
-          }}
-        />
+        <Toaster position="top-center" toastOptions={{ style: { background: '#16162a', color: '#e2e8f0', border: '1px solid #2a2a4a' } }} />
       </body>
     </html>
   );
