@@ -1,0 +1,25 @@
+# Unified Security Toolkit - Python dependencies
+# Only ONE pip package is needed:
+rich>=13.0.0
+
+# All security tools are system packages installed via apt/pacman/brew.
+# Run this to install on Kali / Debian / Ubuntu:
+#
+#   sudo apt update && sudo apt install -y \
+#     nmap whois dnsutils dnsrecon \
+#     nikto wapiti \
+#     metasploit-framework sqlmap exploitdb \
+#     hydra john hashcat medusa crunch \
+#     gobuster dirb wfuzz curl wget \
+#     aircrack-ng wifite reaver \
+#     netcat tcpdump tshark ettercap-graphical dsniff hping3 \
+#     binwalk steghide libimage-exiftool-perl foremost
+#
+# Kali Linux already has most of these pre-installed.
+#
+# Extra tools (manual install):
+#   subfinder : go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+#   amass     : go install -v github.com/owasp-amass/amass/v4/...@master
+#   theHarvester: sudo apt install theharvester
+#   zphisher  : git clone https://github.com/htr-tech/zphisher
+#   setoolkit : sudo apt install set
