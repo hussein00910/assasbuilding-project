@@ -1,0 +1,19 @@
+# Ethical Hacking Toolkit – Python dependencies
+# Tkinter ships with CPython; no extra pip packages needed for the GUI.
+#
+# External CLI tools required (install via your OS package manager):
+#   nmap      – network scanner
+#   hydra     – password brute-force
+#   nikto     – web vulnerability scanner
+#   dirb      – directory brute-forcer
+#   gobuster  – fast directory/DNS brute-forcer
+#   whatweb   – web technology fingerprinting
+#
+# Ubuntu / Debian:
+#   sudo apt update && sudo apt install -y nmap hydra nikto dirb gobuster whatweb
+#
+# Arch Linux:
+#   sudo pacman -S nmap hydra nikto dirb gobuster whatweb
+#
+# macOS (Homebrew):
+#   brew install nmap hydra nikto dirb gobuster whatweb

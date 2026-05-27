@@ -1,0 +1,53 @@
+name: 🔴 Build RedAmon Android APK
+
+on:
+  push:
+    branches: [ main, claude/ethical-hacking-toolkit-2FUwT ]
+    paths:
+      - 'redamon_android/**'
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        working-directory: redamon_android
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y \
+            python3-pip build-essential git \
+            libffi-dev libssl-dev zlib1g-dev \
+            openjdk-17-jdk unzip zip cmake
+
+      - name: Install Buildozer + Cython
+        run: pip install buildozer cython==0.29.37
+
+      - name: Cache Buildozer global dir
+        uses: actions/cache@v4
+        with:
+          path: ~/.buildozer
+          key: buildozer-${{ runner.os }}-${{ hashFiles('redamon_android/buildozer.spec') }}
+          restore-keys: buildozer-${{ runner.os }}-
+
+      - name: Build debug APK
+        run: yes | buildozer android debug 2>&1 | tail -300
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: RedAmon-Android-APK
+          path: redamon_android/bin/*.apk
+          if-no-files-found: error
+
+      - name: APK info
+        run: ls -lh bin/*.apk
