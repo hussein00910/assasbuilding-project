@@ -12,7 +12,7 @@
     "next": "14.2.5",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "@supabase/supabase-js": "2.44.2",
+    "@supabase/supabase-js": "^2.64.6",
     "lucide-react": "0.400.0",
     "react-hot-toast": "2.4.1",
     "clsx": "2.1.1",

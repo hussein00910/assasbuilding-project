@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key =
@@ -10,12 +12,13 @@ export async function GET() {
   const adminKey = process.env.ADMIN_SECRET_KEY;
 
   const envStatus = {
-    NEXT_PUBLIC_SUPABASE_URL: url ? `✅ ${url.substring(0, 30)}...` : '❌ MISSING',
-    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY ? '✅ SET' : '❌ MISSING',
-    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ? '✅ SET' : '❌ MISSING',
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? '✅ SET' : '❌ MISSING',
+    NEXT_PUBLIC_SUPABASE_URL: url ? `✅ ${url.substring(0, 40)}` : '❌ MISSING',
+    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY ? `✅ ${process.env.SUPABASE_SERVICE_ROLE_KEY.substring(0,25)}...` : '❌ MISSING',
+    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ? `✅ ${process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.substring(0,25)}...` : '❌ MISSING',
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? `✅ ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY.substring(0,25)}...` : '❌ MISSING',
     ADMIN_SECRET_KEY: adminKey ? '✅ SET' : '❌ MISSING',
-    active_key: key ? `✅ ${key.substring(0, 20)}...` : '❌ NO KEY FOUND',
+    active_key: key ? `✅ ${key.substring(0, 30)}...` : '❌ NO KEY FOUND',
+    checked_at: new Date().toISOString(),
   };
 
   if (!url || !key) {
@@ -26,7 +29,7 @@ export async function GET() {
     const db = createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
     const { data, error } = await db.from('products').select('count').single();
     if (error) {
-      return NextResponse.json({ status: 'DB_ERROR', message: error.message, hint: error.hint, env: envStatus }, { status: 500 });
+      return NextResponse.json({ status: 'DB_ERROR', message: error.message, hint: error.hint, code: error.code, env: envStatus }, { status: 500 });
     }
     return NextResponse.json({ status: 'OK ✅', message: 'Supabase connected successfully', data, env: envStatus });
   } catch (e: any) {
